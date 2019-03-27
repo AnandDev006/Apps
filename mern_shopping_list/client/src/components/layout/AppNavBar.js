@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import {
     Collapse,
     Navbar,
@@ -6,24 +7,62 @@ import {
     NavbarBrand,
     Nav,
     NavItem,
-    NavLink,
     Container
 } from "reactstrap";
 
+import RegisterModal from "./auth/RegisterModal";
+import Logout from "./auth/Logout";
+import Login from "./auth/Login";
+
 class AppNavBar extends Component {
     state = {
-        isOpen: false
+        isOpen: false,
+        showRegister: false
     };
-    
-    toggle = () => {
-        this.setState( (prevState) => {
+
+    setShowRegister = (setTo) => {
+        this.setState(prevState => {
             return {
-                isOpen: !prevState.isOpen,
+                showRegister: setTo
+            };
+        });
+    };
+
+    toggle = () => {
+        this.setState(prevState => {
+            return {
+                isOpen: !prevState.isOpen
             };
         });
     };
 
     render() {
+        const { isAuthenticated, user } = this.props;
+        const { showRegister } = this.state;
+
+        const authLinks = (
+            <React.Fragment>
+                <NavItem>
+                    <span className="navbar-text mr-3">
+                        <strong>{user ? `Welcome ${user.name}` : null}</strong>
+                    </span>
+                </NavItem>
+                <NavItem>
+                    <Logout setShowRegister={this.setShowRegister} />
+                </NavItem>
+            </React.Fragment>
+        );
+
+        const guestLinks = showRegister ? (
+            <NavItem>
+                <RegisterModal setShowRegister={this.setShowRegister}/>
+            </NavItem>
+        ) : (
+            <NavItem>
+                <Login setShowRegister={this.setShowRegister} />
+            </NavItem>
+        );
+
         return (
             <div>
                 <Navbar color="dark" dark expand="sm" className="mb-5">
@@ -32,9 +71,7 @@ class AppNavBar extends Component {
                         <NavbarToggler onClick={this.toggle} />
                         <Collapse isOpen={this.state.isOpen} navbar>
                             <Nav className="ml-auto" navbar>
-                                <NavItem>
-                                    <NavLink href="https://github.com/AnandDev006" target="_blank">GitHub</NavLink>
-                                </NavItem>
+                                {isAuthenticated ? authLinks : guestLinks}
                             </Nav>
                         </Collapse>
                     </Container>
@@ -44,4 +81,9 @@ class AppNavBar extends Component {
     }
 }
 
-export default AppNavBar;
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    user: state.auth.user,
+});
+
+export default connect(mapStateToProps)(AppNavBar);

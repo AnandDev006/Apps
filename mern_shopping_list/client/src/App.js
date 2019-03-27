@@ -8,8 +8,14 @@ import store from "./store";
 import AppNavBar from "./components/layout/AppNavBar";
 import ShoppingList from "./components/layout/ShoppingList";
 import ItemModal from "./components/layout/ItemModal";
+import { loadUser } from './actions/authActions';
 
 class App extends Component {
+
+    componentDidMount() {
+        store.dispatch(loadUser());
+    }
+
     render() {
         return (
             <Provider store={store}>

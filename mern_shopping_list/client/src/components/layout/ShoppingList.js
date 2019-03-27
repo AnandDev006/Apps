@@ -29,6 +29,7 @@ class ShoppingList extends Component {
                                 classNames="fade"
                             >
                                 <ListGroupItem>
+                                    { this.props.isAuthenticated && ( 
                                     <Button
                                         className="remove-btn"
                                         color="danger"
@@ -37,6 +38,7 @@ class ShoppingList extends Component {
                                     >
                                         &times;
                                     </Button>
+                                    )}
                                     {name}
                                 </ListGroupItem>
                             </CSSTransition>
@@ -52,10 +54,12 @@ ShoppingList.propTypes = {
     getItem: PropTypes.func.isRequired,
     deleteItem: PropTypes.func.isRequired,
     item: PropTypes.object.isRequired,
+    isAuthenticated: PropTypes.bool,
 }
 
 const mapStateToProps = (state) => ({
-    item: state.item
+    item: state.item,
+    isAuthenticated: state.auth.isAuthenticated
 })
 
 export default connect( mapStateToProps, { getItems, deleteItem } )(ShoppingList);
