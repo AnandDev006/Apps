@@ -9,7 +9,6 @@ import {
     FormGroup,
     Label,
     Input,
-    Badge
 } from "reactstrap";
 import PropTypes from "prop-types";
 
@@ -63,7 +62,7 @@ class ItemModal extends Component {
                         Add Item
                     </Button>
                 ) : (
-                    <h2><Badge style={{ marginBottom: "2rem" }} color="info">Login to edit cart</Badge></h2>
+                    <h4 className="mb-4 ml-4">Login to edit cart</h4>
                 )}
 
                 <Modal isOpen={this.state.modal} toggle={this.toggle}>
