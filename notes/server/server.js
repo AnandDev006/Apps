@@ -22,8 +22,16 @@ app.use(bodyParser.json());
 // Routes
 app.use("/auth", require("./routes/users"));
 
-// Start server
+// Serve static assets if in production
+if(process.env.NODE_ENV === 'production'){
+    // Set static folder
+    app.use(express.static('client/build'));
+    app.get('*', ( req, resp) => {
+        resp.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    });
+}
 
+// Start server
 const port = process.env.PORT || 5000;
 app.listen(port);
 console.log(`Server listening on port ${port}`);
