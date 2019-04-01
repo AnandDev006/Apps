@@ -5,35 +5,29 @@ import PropTypes from "prop-types";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 
-import { signUp, oauthGoogle } from "../actions/authActions";
+import { signUp, oauthGoogle, oauthFacebook } from "../actions/authActions";
 import CustomInput from "./CustomInput";
 
 function SignUp(props) {
-    const onSubmit = async formData => {
-        try {
-            await props.signUp(formData);
-            if (!props.errorMessage) {
-                props.history.push("/dashboard");
-            }
-        } catch (error) {}
+    const onSubmit = formData => {
+        props.signUp(formData);
+        if (!props.errorMessage) {
+            props.history.push("/dashboard");
+        }
     };
 
-    const responseGoogle = async res => {
-        try {
-            await props.oauthGoogle(res.accessToken);
-            if (!props.errorMessage) {
-                props.history.push("/dashboard");
-            }
-        } catch (error) {}
+    const responseGoogle = res => {
+        props.oauthGoogle(res.accessToken);
+        if (!props.errorMessage) {
+            props.history.push("/dashboard");
+        }
     };
 
-    const responseFacebook = async res => {
-        try {
-            await props.oauthFacebook(res.accessToken);
-            if (!props.errorMessage) {
-                props.history.push("/dashboard");
-            }
-        } catch (error) {}
+    const responseFacebook = res => {
+        props.oauthFacebook(res.accessToken);
+        if (!props.errorMessage) {
+            props.history.push("/dashboard");
+        }
     };
 
     const { handleSubmit } = props;
@@ -67,8 +61,8 @@ function SignUp(props) {
                             name="password"
                             type="password"
                             id="password"
-                            label="Enter password"
-                            placeholder=""
+                            label="password"
+                            placeholder="p@$$w0rd"
                             component={CustomInput}
                         />
                     </fieldset>
@@ -89,17 +83,23 @@ function SignUp(props) {
                     Sign Up using 3rd party services
                 </div>
                 <GoogleLogin
-                    clientId="247200665853-ofdo2sgei0nnbo71o0hud0qhlqj84btj.apps.googleusercontent.com"
-                    buttonText="Google"
+                    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                    buttonText="Sign Up with Google"
                     onSuccess={responseGoogle}
                     onFailure={responseGoogle}
+                    className="mr-4"
                 />
                 <FacebookLogin
-                    appId="582136658933552"
-                    textButton="Facebook"
+                    appId={process.env.REACT_APP_FACEBOOK_CLIENT_ID}
+                    textButton="Sign Up with Facebook"
                     fields="name, email, picture"
                     callback={responseFacebook}
-                    cssClass="btn btn-outline-primary"
+                    buttonStyle={{
+                        padding: "10px",
+                        borderTopWidth: "0px",
+                        borderBottomWidth: "0px",
+                        height: "60px"
+                    }}
                 />
             </div>
         </div>
@@ -112,9 +112,7 @@ const mapStateToProps = state => ({
     errorMessage: state.auth.errorMessage
 });
 
-export default reduxForm({ form: "signUpForm" })(
-    connect(
-        mapStateToProps,
-        { signUp, oauthGoogle }
-    )(SignUp)
-);
+export default connect(
+    mapStateToProps,
+    { signUp, oauthGoogle, oauthFacebook }
+)(reduxForm({ form: "signUpForm" })(SignUp));
