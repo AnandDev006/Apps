@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect} from "react";
 import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -9,25 +9,24 @@ import { signUp, oauthGoogle, oauthFacebook } from "../actions/authActions";
 import CustomInput from "./CustomInput";
 
 function SignUp(props) {
+
+    const [errorMessage, setErrorMessage] = useState('')
+;
+    useEffect(() => {
+        console.log(errorMessage, ' : change : ',props.errorMessage );
+        setErrorMessage( props.errorMessage);
+    }, [props.errorMessage]);
+
     const onSubmit = formData => {
         props.signUp(formData);
-        if (!props.errorMessage) {
-            props.history.push("/dashboard");
-        }
     };
 
     const responseGoogle = res => {
         props.oauthGoogle(res.accessToken);
-        if (!props.errorMessage) {
-            props.history.push("/dashboard");
-        }
     };
 
     const responseFacebook = res => {
         props.oauthFacebook(res.accessToken);
-        if (!props.errorMessage) {
-            props.history.push("/dashboard");
-        }
     };
 
     const { handleSubmit } = props;
@@ -112,7 +111,9 @@ const mapStateToProps = state => ({
     errorMessage: state.auth.errorMessage
 });
 
-export default connect(
-    mapStateToProps,
-    { signUp, oauthGoogle, oauthFacebook }
-)(reduxForm({ form: "signUpForm" })(SignUp));
+export default reduxForm({ form: "signUpForm" })(
+    connect(
+        mapStateToProps,
+        { signUp, oauthGoogle, oauthFacebook }
+    )(SignUp)
+);

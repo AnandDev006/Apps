@@ -7,8 +7,8 @@ import {
 } from "../constants/backendURLs";
 import { AUTH_SIGN_UP, AUTH_ERROR, AUTH_SIGNOUT, AUTH_SIGN_IN } from "./types";
 
-export const oauthGoogle = formData => dispatch => {
-    Axios.post(googleOAuthSignUpURL, formData)
+export const oauthGoogle = access_token => dispatch => {
+    Axios.post(googleOAuthSignUpURL, { access_token })
         .then(res => {
             dispatch({
                 type: AUTH_SIGN_UP,
@@ -25,8 +25,8 @@ export const oauthGoogle = formData => dispatch => {
         });
 };
 
-export const oauthFacebook = formData => dispatch => {
-    Axios.post(facebookOAuthSignUpURL, formData)
+export const oauthFacebook = access_token => dispatch => {
+    Axios.post(facebookOAuthSignUpURL, { access_token })
         .then(res => {
             dispatch({
                 type: AUTH_SIGN_UP,
