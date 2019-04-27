@@ -28,7 +28,7 @@ module.exports = {
       password: Joi.string().required(),
     }),
     noteInsertUpdateSchema: Joi.object().keys({
-      userID: Joi.string().required(),
+      noteID: Joi.string(),
       title: Joi.string().required(),
       body: Joi.string(),
     }),
