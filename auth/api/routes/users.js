@@ -6,15 +6,31 @@ const passportConf = require('../passport');
 const UserController = require('../controller/users');
 const { validateBody, schemas } = require('../helpers/routeHelpers');
 
-const passportLocal = passport.authenticate('local', { session: false });
-const passportJwt = passport.authenticate('jwt', { session: false });
+const passportSignIn = passport.authenticate('local', { session: false });
+const passportSecretJWT = passport.authenticate('jwt', { session: false });
+const passportGoogle = passport.authenticate('googleToken', { session: false });
+const passportFacebook = passport.authenticate('facebookToken', {
+	session: false,
+});
 
 router
 	.route('/signup')
-	.post(validateBody(schemas.authSchema), UserController.signUp);
+	.post(validateBody(schemas.signUpSchema), UserController.signUp);
+
 router
 	.route('/signin')
-	.post(passportLocal, validateBody(schemas.authSchema), UserController.signIn);
-router.route('/secret').get(passportJwt, UserController.secret);
+	.post(
+		validateBody(schemas.signInSchema),
+		passportSignIn,
+		UserController.signIn
+	);
+
+router.route('/oauth/google').post(passportGoogle, UserController.googleOAuth);
+
+router
+	.route('/oauth/facebook')
+	.post(passportFacebook, UserController.facebookOAuth);
+
+router.route('/secret').get(passportSecretJWT, UserController.secret);
 
 module.exports = router;

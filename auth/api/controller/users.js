@@ -17,33 +17,55 @@ const signToken = newUser => {
 
 module.exports = {
 	signUp: async (req, res, next) => {
-		const { email, password } = req.value.body;
+		const { name, email, password } = req.value.body;
 
+		// Check if user exist with same email
+		const foundUser = await User.findOne({ 'local.email': email });
+		if (foundUser) {
+			return res.status(403).json({ msg: 'Email already in use' });
+		}
+
+		// Create new user
 		const newUser = new User({
-			email,
-			password,
+			method: 'local',
+			local: {
+				name,
+				email,
+				password,
+			},
 		});
 
-		try {
-			const foundUser = await User.findOne({ email });
-			if (foundUser) {
-				return res
-					.status(403)
-					.json({ msg: 'user with same email already exists' });
-			}
-			await newUser.save();
-		} catch (error) {
-			throw error;
-		}
+		await newUser.save();
 
 		const token = signToken(newUser);
 
-		res.status(200).json({ msg: 'Sign Up Successful', token });
+		// Respond with token
+		console.log('SignUp successful');
+		res.status(200).json({ token });
 	},
 
 	signIn: async (req, res, next) => {
 		const token = signToken(req.user);
-		res.status(200).json({ msg: 'Sign In Successful', token });
+
+		// Respond with token
+		console.log('SignIn successful');
+		res.status(200).json({ token });
+	},
+
+	googleOAuth: async (req, res, next) => {
+		const token = signToken(req.user);
+
+		// Respond with token
+		console.log('Google SignIn successful');
+		res.status(200).json({ token });
+	},
+
+	facebookOAuth: async (req, res, next) => {
+		const token = signToken(req.user);
+
+		// Respond with token
+		console.log('Facebook SignIn successful');
+		res.status(200).json({ token });
 	},
 
 	secret: async (req, res, next) => {
